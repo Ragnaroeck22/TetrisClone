@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(${PROJECT_NAME} main.cpp Blocks/Block.cpp Blocks/Block.h Board/Tile.h Board/Board.cpp Board/Board.h)
+add_executable(${PROJECT_NAME} main.cpp Board/Tile.h Board/Board.cpp Board/Board.h Blocks/Piece.cpp Blocks/Piece.h Blocks/PieceI.cpp Blocks/PieceI.h Other/Functions.h Board/Tile.cpp Board/Tile.h)
 
 # Add config.h.in file
 configure_file(config.h.in config.h)

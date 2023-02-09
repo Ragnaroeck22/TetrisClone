@@ -6,7 +6,9 @@
 
 #include "raylib.h"
 #include <vector>
+#include <memory>
 #include "Tile.h"
+#include "../Blocks/Piece.h"
 
 class Board {
 
@@ -18,6 +20,8 @@ public:
 
     std::vector<std::vector<Tile>> tiles; // When accessing single tiles: [y][x] (this pains me, but it's better this way)
 
+    std::shared_ptr<Piece> activePiece;
+    std::vector<std::shared_ptr<Piece>> piecePool;
 
 public:
     Board();
@@ -25,6 +29,12 @@ public:
     void Update();
     void Draw();
 
+
+    std::shared_ptr<Piece> getPieceFromPool();
+
+
+private:
+    void genNewPiecePool();
 
 };
 
