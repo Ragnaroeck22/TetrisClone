@@ -25,6 +25,7 @@ int main() {
     {
         // ===== UPDATE =====
 
+        board.Update();
 
         // ===== DRAW =====
         BeginDrawing();

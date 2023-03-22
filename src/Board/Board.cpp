@@ -16,6 +16,9 @@ Board::Board()
     boardRec.x = GetScreenWidth() / 2 - boardRec.width / 2;
     boardRec.y = GetScreenHeight() / 2 - boardRec.height / 2;
 
+    int targetX = boardSize.x / 2 - 1;
+    int targetY = boardSize.y - 3;
+    spawnPosition = {static_cast<float>(targetX), static_cast<float>(targetY)};
 
     // Fill board
     // Rows
@@ -31,11 +34,17 @@ Board::Board()
         tiles.push_back(helperVec);
     }
 
+    spawnPiece();
 
 }
 
 void Board::Update()
 {
+
+    if (IsKeyPressed(KEY_UP))
+    {
+        rotatePiece();
+    }
 
 }
 
@@ -86,19 +95,13 @@ void Board::genNewPiecePool()
 {
     piecePool.clear();
 
-    int targetX = boardSize.x / 2;
-    int targetY = boardSize.y - 1;
-    Vector2 targetVec = {static_cast<float>(targetX), static_cast<float>(targetY)};
-
-    piecePool.push_back(std::make_shared<PieceI>(targetVec));
+    piecePool.push_back(std::make_shared<PieceI>(spawnPosition));
 }
 
 void Board::spawnPiece()
 {
 
-    std::shared_ptr<Piece> pieceToSpawn = getPieceFromPool();
-
-    // Spawnpoint coords: 12 | 9 (But remember: tiles[y][x])
+    activePiece = getPieceFromPool();
 
     // TODO: Check win condition here
     //
@@ -106,10 +109,55 @@ void Board::spawnPiece()
 
     Color spawnColor = randomColor();
 
-    for (int i = 0; i < pieceToSpawn->blockRelPos.size(); i++)
+    for (int i = 0; i < activePiece->blockRelPos.size(); i++)
     {
-        tiles[9 + pieceToSpawn->blockRelPos[i].y][12 + pieceToSpawn->blockRelPos[i].x].contents =
+        tiles[spawnPosition.y + activePiece->blockRelPos[i].y][spawnPosition.x + activePiece->blockRelPos[i].x].contents =
                 std::make_shared<Block>(spawnColor);
+    }
+
+}
+
+void Board::rotatePiece()
+{
+    TraceLog(LOG_INFO, "Rotating");
+    std::vector<Vector2> rotationMemory = activePiece->blockRelPos;
+
+    activePiece->rotate();
+
+    // Check if rotation is possible
+    TraceLog(LOG_INFO, "Checking if rotation is possible");
+    for (int i = 0; i < activePiece->blockRelPos.size() - 1; i++)
+    {
+        int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
+        int yToCheck = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
+
+        if (tiles[yToCheck][xToCheck].contents != nullptr)
+        {
+            if (tiles[yToCheck][xToCheck].contents->isStatic)
+            {
+                // Rotation failed, revert to previous block positions
+                activePiece->blockRelPos = rotationMemory;
+                return;
+            }
+        }
+    }
+
+    // Delete old positions
+    TraceLog(LOG_INFO, "Deleting old blocks");
+    for (int i = 0; i < rotationMemory.size(); i++)
+    {
+        int xToDelete = activePiece->centerCoords.x + rotationMemory[i].x;
+        int yToDelete = activePiece->centerCoords.y + rotationMemory[i].y;
+        tiles[yToDelete][xToDelete].contents = nullptr;
+    }
+
+    // Create new blocks
+    TraceLog(LOG_INFO, "Creating new blocks");
+    for (int i = 0; i < activePiece->blockRelPos.size() - 1; i++)
+    {
+        int xToDelete = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
+        int yToDelete = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
+        tiles[yToDelete][xToDelete].contents = std::make_shared<Block>(activePiece->color);
     }
 
 }

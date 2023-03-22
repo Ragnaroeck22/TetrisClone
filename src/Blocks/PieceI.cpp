@@ -34,6 +34,28 @@ PieceI::PieceI(Vector2 boardDimensions)
 int PieceI::rotate()
 {
 
+    switch (rotation)
+    {
+        case 0:
+            blockRelPos[1].x = 0;
+            blockRelPos[1].y = -1;
+            blockRelPos[2].x = 0;
+            blockRelPos[2].y = 1;
+            blockRelPos[3].x = 0;
+            blockRelPos[3].y = 2;
+            rotation = 1;
+            break;
+        case 1:
+            blockRelPos[1].x = -1;
+            blockRelPos[1].y = 0;
+            blockRelPos[2].x = 1;
+            blockRelPos[2].y = 0;
+            blockRelPos[3].x = 2;
+            blockRelPos[3].y = 0;
+            rotation = 1;
+            break;
+    }
+
     /*
     switch(rotation)
     {

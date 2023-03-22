@@ -17,10 +17,12 @@ public:
     int tileMargins = 1;
     int tileSize = 40;
     Vector2 boardSize = {10, 24};
+    Vector2 spawnPosition;
 
     std::vector<std::vector<Tile>> tiles; // When accessing single tiles: [y][x] (this pains me, but it's better this way)
 
-    std::shared_ptr<Piece> activePiece;
+    std::shared_ptr<Piece> activePiece; // Obsolete?
+
     std::vector<std::shared_ptr<Piece>> piecePool;
 
 public:
@@ -38,6 +40,7 @@ private:
 
     void spawnPiece();
 
+    void rotatePiece();
 };
 
 
