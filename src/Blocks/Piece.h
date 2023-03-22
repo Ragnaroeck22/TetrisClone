@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../Board/Tile.h"
+#include <vector>
 
 class Piece {
 
@@ -12,11 +13,14 @@ public:
 
     static const int BLOCKCOUNT = 4;
 
-    Tile blocks[BLOCKCOUNT];
+    Block blocks[BLOCKCOUNT];
+    std::vector<Vector2> blockRelPos;
 
     int rotation = 0;
 
     Color color;
+
+    Vector2 centerCoords;
 
     virtual int rotate() = 0;
     virtual void assignColor();

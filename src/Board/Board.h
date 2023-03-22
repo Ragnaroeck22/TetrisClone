@@ -36,6 +36,8 @@ public:
 private:
     void genNewPiecePool();
 
+    void spawnPiece();
+
 };
 
 

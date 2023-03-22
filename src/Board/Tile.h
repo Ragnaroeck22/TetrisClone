@@ -5,16 +5,18 @@
 #pragma once
 
 #include "raylib.h"
+#include <memory>
+
+#include "../Blocks/Block.h"
 
 class Tile {
 
 public:
+    std::shared_ptr<Block> contents = nullptr;
+
     Vector2 coordinates;
-    bool isBlocked = false;
-    Color color;
 
 private:
-    Color colorDefault = BLACK;
 
 public:
     Tile(Vector2 coordinates, Color color);

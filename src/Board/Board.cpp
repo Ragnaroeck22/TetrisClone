@@ -47,11 +47,18 @@ void Board::Draw()
     {
         for (int j = 0; j < boardSize.x; j++)
         {
-
-            DrawRectangle(boardRec.x + j * tileSize + j * tileMargins,
-                          (boardRec.y + boardRec.height - tileSize) - i * tileSize - i * tileMargins,
-                          tileSize, tileSize, tiles[i][j].color);
-
+            if (tiles[i][j].contents != nullptr)
+            {
+                DrawRectangle(boardRec.x + j * tileSize + j * tileMargins,
+                              (boardRec.y + boardRec.height - tileSize) - i * tileSize - i * tileMargins,
+                              tileSize, tileSize, tiles[i][j].contents->color);
+            }
+            else
+            {
+                DrawRectangle(boardRec.x + j * tileSize + j * tileMargins,
+                              (boardRec.y + boardRec.height - tileSize) - i * tileSize - i * tileMargins,
+                              tileSize, tileSize, BLACK);
+            }
         }
 
     }
@@ -79,4 +86,13 @@ void Board::genNewPiecePool()
 {
     piecePool.clear();
     piecePool.push_back(std::make_shared<PieceI>(boardSize));
+}
+
+void Board::spawnPiece()
+{
+    std::shared_ptr<Piece> pieceToSpawn = getPieceFromPool();
+
+    // Spawnpoint coords: 12 | 9 (But remember: tiles[y][x])
+
+
 }

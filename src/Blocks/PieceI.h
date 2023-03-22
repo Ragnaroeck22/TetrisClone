@@ -9,8 +9,12 @@
 class PieceI : public Piece {
 
 public:
-    PieceI(Vector2 boardDimensions);
+    //PieceI(Vector2 boardDimensions);
+
+    PieceI(Vector2 centerPos);
+
     int rotate() override;
+
 
 
 };

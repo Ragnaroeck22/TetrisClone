@@ -18,6 +18,7 @@ void Piece::assignColor()
 
 void Piece::Draw(Vector2 centerPosition, int tileSize, int tileMargins)
 {
+    /*
     for (auto & block : blocks)
     {
         DrawRectangle(centerPosition.x + (block.coordinates.x * tileSize) + (block.coordinates.x * tileMargins),
@@ -25,4 +26,5 @@ void Piece::Draw(Vector2 centerPosition, int tileSize, int tileMargins)
                       tileSize, tileSize, color);
 
     }
+     */
 }
