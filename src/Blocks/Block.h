@@ -10,8 +10,10 @@ class Block {
 
 public:
     Color color;
-    bool isStatic;
+    bool isStatic = false;
 
     Vector2 coordinates;
+
+    Block(Color color);
 };
 

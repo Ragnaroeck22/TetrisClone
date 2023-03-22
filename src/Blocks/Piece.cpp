@@ -9,11 +9,6 @@
 void Piece::assignColor()
 {
     color = randomColor();
-
-    for (auto & block : blocks)
-    {
-        block.color = color;
-    }
 }
 
 void Piece::Draw(Vector2 centerPosition, int tileSize, int tileMargins)

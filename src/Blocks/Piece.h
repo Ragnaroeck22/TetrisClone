@@ -13,7 +13,6 @@ public:
 
     static const int BLOCKCOUNT = 4;
 
-    Block blocks[BLOCKCOUNT];
     std::vector<Vector2> blockRelPos;
 
     int rotation = 0;

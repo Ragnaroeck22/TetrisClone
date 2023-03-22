@@ -7,6 +7,7 @@
 #include <random>
 
 #include "../Blocks/PieceI.h"
+#include "../Other/Functions.h"
 
 Board::Board()
 {
@@ -30,7 +31,6 @@ Board::Board()
         tiles.push_back(helperVec);
     }
 
-    activePiece = std::make_shared<PieceI>(boardSize);
 
 }
 
@@ -67,7 +67,7 @@ void Board::Draw()
 
     // Get tile position
 
-    activePiece->Draw({100, 100}, tileSize, tileMargins);
+    //activePiece->Draw({100, 100}, tileSize, tileMargins);
 
 }
 
@@ -85,14 +85,31 @@ std::shared_ptr<Piece> Board::getPieceFromPool()
 void Board::genNewPiecePool()
 {
     piecePool.clear();
-    piecePool.push_back(std::make_shared<PieceI>(boardSize));
+
+    int targetX = boardSize.x / 2;
+    int targetY = boardSize.y - 1;
+    Vector2 targetVec = {static_cast<float>(targetX), static_cast<float>(targetY)};
+
+    piecePool.push_back(std::make_shared<PieceI>(targetVec));
 }
 
 void Board::spawnPiece()
 {
+
     std::shared_ptr<Piece> pieceToSpawn = getPieceFromPool();
 
     // Spawnpoint coords: 12 | 9 (But remember: tiles[y][x])
 
+    // TODO: Check win condition here
+    //
+    //
+
+    Color spawnColor = randomColor();
+
+    for (int i = 0; i < pieceToSpawn->blockRelPos.size(); i++)
+    {
+        tiles[9 + pieceToSpawn->blockRelPos[i].y][12 + pieceToSpawn->blockRelPos[i].x].contents =
+                std::make_shared<Block>(spawnColor);
+    }
 
 }

@@ -6,12 +6,15 @@
 
 PieceI::PieceI(Vector2 centerPos)
 {
+
+    assignColor();
     this->centerCoords = centerPos;
 
     blockRelPos.push_back({0, 0});
     blockRelPos.push_back({-1, 0});
     blockRelPos.push_back({1, 0});
     blockRelPos.push_back({2, 0});
+
 }
 
 /*
@@ -31,8 +34,6 @@ PieceI::PieceI(Vector2 boardDimensions)
 int PieceI::rotate()
 {
 
-
-
     /*
     switch(rotation)
     {
@@ -48,5 +49,5 @@ int PieceI::rotate()
             return 0;
     }
      */
+    return 0;
 }
-
