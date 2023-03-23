@@ -52,7 +52,7 @@ int PieceI::rotate()
             blockRelPos[2].y = 0;
             blockRelPos[3].x = 2;
             blockRelPos[3].y = 0;
-            rotation = 1;
+            rotation = 0;
             break;
     }
 

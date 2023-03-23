@@ -107,12 +107,10 @@ void Board::spawnPiece()
     //
     //
 
-    Color spawnColor = randomColor();
-
     for (int i = 0; i < activePiece->blockRelPos.size(); i++)
     {
         tiles[spawnPosition.y + activePiece->blockRelPos[i].y][spawnPosition.x + activePiece->blockRelPos[i].x].contents =
-                std::make_shared<Block>(spawnColor);
+                std::make_shared<Block>(activePiece->color);
     }
 
 }
@@ -126,7 +124,7 @@ void Board::rotatePiece()
 
     // Check if rotation is possible
     TraceLog(LOG_INFO, "Checking if rotation is possible");
-    for (int i = 0; i < activePiece->blockRelPos.size() - 1; i++)
+    for (int i = 0; i < activePiece->blockRelPos.size(); i++)
     {
         int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
         int yToCheck = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
@@ -136,6 +134,7 @@ void Board::rotatePiece()
             if (tiles[yToCheck][xToCheck].contents->isStatic)
             {
                 // Rotation failed, revert to previous block positions
+                TraceLog(LOG_INFO, "Failed to rotate Piece");
                 activePiece->blockRelPos = rotationMemory;
                 return;
             }
@@ -153,7 +152,7 @@ void Board::rotatePiece()
 
     // Create new blocks
     TraceLog(LOG_INFO, "Creating new blocks");
-    for (int i = 0; i < activePiece->blockRelPos.size() - 1; i++)
+    for (int i = 0; i < activePiece->blockRelPos.size(); i++)
     {
         int xToDelete = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
         int yToDelete = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
