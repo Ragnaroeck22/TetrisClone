@@ -115,6 +115,18 @@ void Board::spawnPiece()
 
 }
 
+bool Board::isTileFree(int posX, int posY)
+{
+    if (tiles[posY][posX].contents != nullptr)
+    {
+        if (tiles[posY][posX].contents->isStatic)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void Board::rotatePiece()
 {
     TraceLog(LOG_INFO, "Rotating");
@@ -129,15 +141,12 @@ void Board::rotatePiece()
         int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
         int yToCheck = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
 
-        if (tiles[yToCheck][xToCheck].contents != nullptr)
+        if (!isTileFree(xToCheck, yToCheck))
         {
-            if (tiles[yToCheck][xToCheck].contents->isStatic)
-            {
-                // Rotation failed, revert to previous block positions
-                TraceLog(LOG_INFO, "Failed to rotate Piece");
-                activePiece->blockRelPos = rotationMemory;
-                return;
-            }
+            // Rotation failed, revert to previous block positions
+            TraceLog(LOG_INFO, "Failed to rotate Piece");
+            activePiece->blockRelPos = rotationMemory;
+            return;
         }
     }
 
@@ -160,3 +169,20 @@ void Board::rotatePiece()
     }
 
 }
+
+void Board::movePiece(Direction direction)
+{
+    switch (direction)
+    {
+        case LEFT:
+            // Check if move is possible
+            std::vector<Vector2> blocksToCheck = vecLowestX(activePiece->blockRelPos);
+
+            for (int i = 0; i < blocksToCheck.size(); i++)
+            {
+
+            }
+    }
+
+}
+

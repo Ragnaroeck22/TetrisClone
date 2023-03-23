@@ -43,3 +43,57 @@ Color randomColor()
                 return RED;
         }
 }
+
+std::vector<Vector2> vecLowestX(std::vector<Vector2> vecToCheck)
+{
+    if (vecToCheck.size() > 0)
+    {
+        float memory = vecToCheck[0].x;
+
+        // Set up memory
+        for (int i = 0; i < vecToCheck.size(); i++)
+        {
+            if (vecToCheck[i].x < memory)
+            {
+                memory = vecToCheck[i].x;
+            }
+        }
+        // Fill return vector
+        std::vector<Vector2> returnVec;
+        for (int i = 0; i < vecToCheck.size(); i++)
+        {
+            if (vecToCheck[i].x == memory)
+                returnVec.push_back(vecToCheck[i]);
+        }
+        return returnVec;
+    }
+    else
+        return vecToCheck;
+}
+
+std::vector<Vector2> vecHighestX(std::vector<Vector2> vecToCheck)
+{
+    if (vecToCheck.size() > 0)
+    {
+        float memory = vecToCheck[0].x;
+
+        // Set up memory
+        for (int i = 0; i < vecToCheck.size(); i++)
+        {
+            if (vecToCheck[i].x > memory)
+            {
+                memory = vecToCheck[i].x;
+            }
+        }
+        // Fill return vector
+        std::vector<Vector2> returnVec;
+        for (int i = 0; i < vecToCheck.size(); i++)
+        {
+            if (vecToCheck[i].x == memory)
+                returnVec.push_back(vecToCheck[i]);
+        }
+        return returnVec;
+    }
+    else
+        return vecToCheck;
+}

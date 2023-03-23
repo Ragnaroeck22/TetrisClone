@@ -7,6 +7,7 @@
 #include "raylib.h"
 #include <vector>
 #include <memory>
+#include "../Other/Enums.h"
 #include "Tile.h"
 #include "../Blocks/Piece.h"
 
@@ -39,8 +40,11 @@ private:
     void genNewPiecePool();
 
     void spawnPiece();
+    bool isTileFree(int posX, int posY); // Check if a tile is free
 
     void rotatePiece();
+    void movePiece(Direction direction);
+
 };
 
 
