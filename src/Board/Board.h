@@ -13,7 +13,7 @@
 
 class Board {
 
-public:
+private:
     Rectangle boardRec;
     int tileMargins = 1;
     int tileSize = 40;
@@ -39,6 +39,9 @@ public:
     int playerMoveTickTimer = 0;
     int playerMoveTickTarget = 6;
 
+    int score = 0;
+    int linesCleared = 0;
+    int fontSize = 50;
 
 public:
     Board();
@@ -64,6 +67,7 @@ private:
     void dropBlocks();
 
     void updateDisplayBoard();
+    void updateMoveTickModifier();
 };
 
 

@@ -5,6 +5,7 @@
 #include "Board.h"
 
 #include <random>
+#include <cmath>
 
 #include "../Blocks/PieceI.h"
 #include "../Blocks/PieceT.h"
@@ -126,6 +127,27 @@ void Board::Draw()
 
     }
 
+    std::string scoreMsg = "Score: ";
+    scoreMsg.append(std::to_string(score));
+    DrawText(scoreMsg.c_str(),
+             displayBoardRec.x, displayBoardRec.y + displayBoardRec.height + (GetScreenHeight() * 0.05),
+             fontSize, BLACK);
+
+    int targetY = displayBoardRec.y + displayBoardRec.height + (GetScreenHeight() * 0.1) + fontSize;
+    std::string lineMsg = "Lines Cleared: ";
+    lineMsg.append(std::to_string(linesCleared));
+    DrawText(lineMsg.c_str(),
+             displayBoardRec.x,
+             targetY,
+             fontSize, BLACK);
+
+    std::string modifierMsg = "Move Tick Modifier: ";
+    int modifier = moveTickModifier * 100;
+    modifierMsg.append(std::to_string(modifier));
+    DrawText(modifierMsg.c_str(),
+             displayBoardRec.x,
+             targetY + (GetScreenHeight() * 0.05) + fontSize,
+             fontSize, BLACK);
 
 }
 
@@ -401,6 +423,7 @@ void Board::handlePlayerMovement()
 void Board::dropBlocks()
 {
     bool lineHasBeenDropped;
+    int linesDroppedLocal = 0;
 
     do
     {
@@ -432,9 +455,27 @@ void Board::dropBlocks()
                     }
                 }
                 lineHasBeenDropped = true;
+                linesDroppedLocal++;
+                linesCleared++;
+                updateMoveTickModifier();
             }
         }
     } while (lineHasBeenDropped);
+
+    switch (linesDroppedLocal)
+    {
+        case 1:
+            score += 100;
+            break;
+        case 2:
+            score += 300;
+            break;
+        case 3:
+            score += 600;
+            break;
+        case 4:
+            score += 1000;
+    }
 }
 
 void Board::updateDisplayBoard()
@@ -456,4 +497,9 @@ void Board::updateDisplayBoard()
 
         displayBoard[targetY][targetX].contents = std::make_shared<Block>(pieceBuffer->color);
     }
+}
+
+void Board::updateMoveTickModifier()
+{
+    moveTickModifier = pow(1.1, -linesCleared);
 }
