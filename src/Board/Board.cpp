@@ -41,9 +41,9 @@ Board::Board()
 
 void Board::Update()
 {
-    handleMoveTick();
-
     handlePlayerMovement();
+
+    handleMoveTick();
 
     if (!activePiece->isActive)
     {
@@ -181,6 +181,7 @@ void Board::movePiece(Direction direction)
 {
     bool movePossible = true;
     Vector2 centerMemory = activePiece->centerCoords;
+    bool disablePiece = false;
 
     switch (direction)
     {
@@ -232,11 +233,11 @@ void Board::movePiece(Direction direction)
                 if (!isTileFree(xToCheck, yToCheck))
                 {
                     movePossible = false;
+                    disablePiece = true;
                 }
             }
             // Move center
-            if (movePossible)
-            {
+            if (movePossible) {
                 activePiece->centerCoords.y = activePiece->centerCoords.y - 1;
             }
 
@@ -249,7 +250,6 @@ void Board::movePiece(Direction direction)
     // Move blocks
     if (movePossible)
     {
-
         // Delete old positions
         for (int i = 0; i < activePiece->blockRelPos.size(); i++)
         {
@@ -268,34 +268,21 @@ void Board::movePiece(Direction direction)
     }
 
     // Make piece static if it cant move down
-    if (direction == DOWN)
+    if (disablePiece)
     {
-        bool disablePiece = false;
+        activePiece->isActive = false;
         for (int i = 0; i < activePiece->blockRelPos.size(); i++)
         {
-            int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
-            int yToCheck = activePiece->centerCoords.y + activePiece->blockRelPos[i].y - 1;
+            int targetX = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
+            int targetY = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
 
-            if (!isTileFree(xToCheck, yToCheck))
+            if (tiles[targetY][targetX].contents != nullptr) // Just in case
             {
-                disablePiece = true;
-            }
-        }
-        if (disablePiece)
-        {
-            activePiece->isActive = false;
-            for (int i = 0; i < activePiece->blockRelPos.size(); i++)
-            {
-                int targetX = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
-                int targetY = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
-
-                if (tiles[targetY][targetX].contents != nullptr) // Just in case
-                {
-                    tiles[targetY][targetX].contents->isStatic = true;
-                }
+                tiles[targetY][targetX].contents->isStatic = true;
             }
         }
     }
+
 
 }
 
