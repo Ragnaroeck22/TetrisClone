@@ -49,7 +49,6 @@ Board::Board()
 
     for (int i = 0; i < displayBoardSize; i++)
     {
-        TraceLog(LOG_INFO, "Building db");
         std::vector<Tile> helperVec;
         // Columns
         for (int j = 0; j < displayBoardSize; j++)
@@ -61,6 +60,13 @@ Board::Board()
     }
     spawnPiece();
     updateDisplayBoard();
+
+    // Initialize sounds
+    soundPlaceBlock = LoadSound("assets/audio/sfx/place_block.ogg");
+    soundClearOne = LoadSound("assets/audio/sfx/clear_one.ogg");
+    soundClearTwo = LoadSound("assets/audio/sfx/clear_two.ogg");
+    soundClearThree = LoadSound("assets/audio/sfx/clear_three.ogg");
+    soundClearTetris = LoadSound("assets/audio/sfx/clear_tetris.ogg");
 
 }
 
@@ -385,6 +391,8 @@ void Board::movePiece(Direction direction)
                 tiles[targetY][targetX].contents->isStatic = true;
             }
         }
+        TraceLog(LOG_INFO, "Playing sound");
+        PlaySound(soundPlaceBlock);
     }
 
 
@@ -485,15 +493,19 @@ void Board::dropBlocks()
     {
         case 1:
             score += 100;
+            PlaySound(soundClearOne);
             break;
         case 2:
             score += 300;
+            PlaySound(soundClearTwo);
             break;
         case 3:
             score += 500;
+            PlaySound(soundClearThree);
             break;
         case 4:
             score += 800;
+            PlaySound(soundClearTetris);
     }
 }
 

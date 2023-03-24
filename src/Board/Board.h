@@ -44,6 +44,13 @@ private:
     int fontSize = 50;
 
     bool gameOver = false;
+
+    Sound soundPlaceBlock;
+    Sound soundClearOne;
+    Sound soundClearTwo;
+    Sound soundClearThree;
+    Sound soundClearTetris;
+
 public:
     Board();
 
