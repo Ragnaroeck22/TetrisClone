@@ -8,6 +8,11 @@
 
 #include "../Blocks/PieceI.h"
 #include "../Blocks/PieceT.h"
+#include "../Blocks/PieceS.h"
+#include "../Blocks/PieceZ.h"
+#include "../Blocks/PieceL.h"
+#include "../Blocks/PieceJ.h"
+#include "../Blocks/PieceSquare.h"
 #include "../Other/Functions.h"
 
 Board::Board()
@@ -101,6 +106,11 @@ void Board::genNewPiecePool()
 
     piecePool.push_back(std::make_shared<PieceI>(spawnPosition));
     piecePool.push_back(std::make_shared<PieceT>(spawnPosition));
+    piecePool.push_back(std::make_shared<PieceS>(spawnPosition));
+    piecePool.push_back(std::make_shared<PieceZ>(spawnPosition));
+    piecePool.push_back(std::make_shared<PieceL>(spawnPosition));
+    piecePool.push_back(std::make_shared<PieceJ>(spawnPosition));
+    piecePool.push_back(std::make_shared<PieceSquare>(spawnPosition));
 }
 
 void Board::spawnPiece()
