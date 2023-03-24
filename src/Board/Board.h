@@ -18,11 +18,16 @@ public:
     int tileMargins = 1;
     int tileSize = 40;
     Vector2 boardSize = {10, 24};
+    int displayBoardSize = 5;
     Vector2 spawnPosition;
 
     std::vector<std::vector<Tile>> tiles; // When accessing single tiles: [y][x] (this pains me, but it's better this way)
+    std::vector<std::vector<Tile>> displayBoard; // When accessing single tiles: [y][x] (this pains me, but it's better this way)
+    Rectangle displayBoardRec;
+
 
     std::shared_ptr<Piece> activePiece;
+    std::shared_ptr<Piece> pieceBuffer = nullptr;
 
     std::vector<std::shared_ptr<Piece>> piecePool;
 
@@ -41,11 +46,10 @@ public:
     void Update();
     void Draw();
 
-
-    std::shared_ptr<Piece> getPieceFromPool();
-
-
 private:
+    std::shared_ptr<Piece> getPieceFromPool();
+    std::shared_ptr<Piece> getPieceFromBuffer();
+
     void genNewPiecePool();
 
     void spawnPiece();
@@ -58,6 +62,8 @@ private:
     void handlePlayerMovement();
 
     void dropBlocks();
+
+    void updateDisplayBoard();
 };
 
 

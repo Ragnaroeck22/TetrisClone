@@ -26,6 +26,12 @@ Board::Board()
     int targetY = boardSize.y - 3;
     spawnPosition = {static_cast<float>(targetX), static_cast<float>(targetY)};
 
+    displayBoardRec.width = tileSize * displayBoardSize + ((displayBoardSize - 1) * tileMargins);
+    displayBoardRec.height = displayBoardRec.width;
+    displayBoardRec.x = boardRec.x + boardRec.width + (GetScreenWidth() * 0.05);
+    displayBoardRec.y = boardRec.y;
+
+
     // Fill board
     // Rows
     for (int i = 0; i < boardSize.y; i++)
@@ -40,7 +46,20 @@ Board::Board()
         tiles.push_back(helperVec);
     }
 
+    for (int i = 0; i < displayBoardSize; i++)
+    {
+        TraceLog(LOG_INFO, "Building db");
+        std::vector<Tile> helperVec;
+        // Columns
+        for (int j = 0; j < displayBoardSize; j++)
+        {
+            Tile tile({static_cast<float>(i) , static_cast<float>(j)});
+            helperVec.push_back(tile);
+        }
+        displayBoard.push_back(helperVec);
+    }
     spawnPiece();
+    updateDisplayBoard();
 
 }
 
@@ -54,12 +73,14 @@ void Board::Update()
     {
         dropBlocks();
         spawnPiece();
+        updateDisplayBoard();
     }
 
 }
 
 void Board::Draw()
 {
+    // Draw board
     DrawRectangleRec(boardRec, GRAY);
 
     for (int i = 0; i < boardSize.y; i++)
@@ -82,11 +103,29 @@ void Board::Draw()
 
     }
 
-    // Draw active piece
+    // Draw display board
+    DrawRectangleRec(displayBoardRec, GRAY);
 
-    // Get tile position
+    for (int i = 0; i < displayBoardSize; i++)
+    {
+        for (int j = 0; j < displayBoardSize; j++)
+        {
+            if (displayBoard[i][j].contents != nullptr)
+            {
+                DrawRectangle(displayBoardRec.x + j * tileSize + j * tileMargins,
+                              (displayBoardRec.y + displayBoardRec.height - tileSize) - i * tileSize - i * tileMargins,
+                              tileSize, tileSize, displayBoard[i][j].contents->color);
+            }
+            else
+            {
+                DrawRectangle(displayBoardRec.x + j * tileSize + j * tileMargins,
+                              (displayBoardRec.y + displayBoardRec.height - tileSize) - i * tileSize - i * tileMargins,
+                              tileSize, tileSize, BLACK);
+            }
+        }
 
-    //activePiece->Draw({100, 100}, tileSize, tileMargins);
+    }
+
 
 }
 
@@ -100,6 +139,19 @@ std::shared_ptr<Piece> Board::getPieceFromPool()
     piecePool.erase(piecePool.cbegin() + random);
     return piece;
 }
+
+std::shared_ptr<Piece> Board::getPieceFromBuffer()
+{
+    if (pieceBuffer == nullptr) // Handles buffer initialisation
+    {
+        pieceBuffer = getPieceFromPool();
+    }
+
+    std::shared_ptr<Piece> returnPiece = pieceBuffer;
+    pieceBuffer = getPieceFromPool();
+    return returnPiece;
+}
+
 
 void Board::genNewPiecePool()
 {
@@ -117,7 +169,7 @@ void Board::genNewPiecePool()
 void Board::spawnPiece()
 {
 
-    activePiece = getPieceFromPool();
+    activePiece = getPieceFromBuffer();
 
     // TODO: Check win condition here
     //
@@ -385,3 +437,23 @@ void Board::dropBlocks()
     } while (lineHasBeenDropped);
 }
 
+void Board::updateDisplayBoard()
+{
+    // Clear display board
+    for (int i = 0; i < displayBoard.size(); i++)
+    {
+        for (int j = 0; j < displayBoard[i].size(); j++)
+        {
+            displayBoard[i][j].contents = nullptr;
+        }
+    }
+    // Load buffer piece into display board
+    int targetCenter = displayBoardSize / 2;
+    for (int i = 0; i < pieceBuffer->blockRelPos.size(); i++)
+    {
+        int targetX = targetCenter + pieceBuffer->blockRelPos[i].x;
+        int targetY = targetCenter + pieceBuffer->blockRelPos[i].y;
+
+        displayBoard[targetY][targetX].contents = std::make_shared<Block>(pieceBuffer->color);
+    }
+}
