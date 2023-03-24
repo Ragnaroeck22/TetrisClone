@@ -22,9 +22,18 @@ public:
 
     std::vector<std::vector<Tile>> tiles; // When accessing single tiles: [y][x] (this pains me, but it's better this way)
 
-    std::shared_ptr<Piece> activePiece; // Obsolete?
+    std::shared_ptr<Piece> activePiece;
 
     std::vector<std::shared_ptr<Piece>> piecePool;
+
+    // Move tick stuff
+    int moveTickTimer = 0;
+    int moveTickTarget = 90;
+    float moveTickModifier = 1;
+    // Player movement
+    int playerMoveTickTimer = 0;
+    int playerMoveTickTarget = 4;
+
 
 public:
     Board();
@@ -45,6 +54,8 @@ private:
     void rotatePiece();
     void movePiece(Direction direction);
 
+    void handleMoveTick();
+    void handlePlayerMovement();
 };
 
 

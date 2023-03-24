@@ -40,24 +40,13 @@ Board::Board()
 
 void Board::Update()
 {
+    handleMoveTick();
 
-    if (IsKeyPressed(KEY_UP))
-    {
-        rotatePiece();
-    }
+    handlePlayerMovement();
 
-    if (IsKeyPressed(KEY_LEFT))
+    if (!activePiece->isActive)
     {
-        movePiece(LEFT);
-    }
-    if (IsKeyPressed(KEY_RIGHT))
-    {
-        movePiece(RIGHT);
-    }
-
-    if (IsKeyPressed(KEY_DOWN))
-    {
-        movePiece(DOWN);
+        spawnPiece();
     }
 
 }
@@ -131,15 +120,8 @@ void Board::spawnPiece()
 
 bool Board::isTileFree(int posX, int posY)
 {
-    std::string debugMsg = "(Board::isTileFree) Checking for ";
-    debugMsg.append(std::to_string(posX));
-    debugMsg.append(" | ");
-    debugMsg.append(std::to_string(posY));
-    TraceLog(LOG_INFO, debugMsg.c_str());
-
     if (posX < 0 || posY < 0 || posY > tiles.size() - 1 || posX > tiles[posY].size() - 1)
     {
-        TraceLog(LOG_INFO, "(Board::isTileFree) Checked tile is out of bounds");
         return false;
     }
 
@@ -156,13 +138,11 @@ bool Board::isTileFree(int posX, int posY)
 
 void Board::rotatePiece()
 {
-    TraceLog(LOG_INFO, "Rotating");
     std::vector<Vector2> rotationMemory = activePiece->blockRelPos;
 
     activePiece->rotate();
 
     // Check if rotation is possible
-    TraceLog(LOG_INFO, "Checking if rotation is possible");
     for (int i = 0; i < activePiece->blockRelPos.size(); i++)
     {
         int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
@@ -178,7 +158,6 @@ void Board::rotatePiece()
     }
 
     // Delete old positions
-    TraceLog(LOG_INFO, "Deleting old blocks");
     for (int i = 0; i < rotationMemory.size(); i++)
     {
         int xToDelete = activePiece->centerCoords.x + rotationMemory[i].x;
@@ -187,7 +166,6 @@ void Board::rotatePiece()
     }
 
     // Create new blocks
-    TraceLog(LOG_INFO, "Creating new blocks");
     for (int i = 0; i < activePiece->blockRelPos.size(); i++)
     {
         int xToCreate = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
@@ -271,7 +249,6 @@ void Board::movePiece(Direction direction)
     {
 
         // Delete old positions
-        TraceLog(LOG_INFO, "(Move) Deleting old blocks");
         for (int i = 0; i < activePiece->blockRelPos.size(); i++)
         {
             int xToDelete = centerMemory.x + activePiece->blockRelPos[i].x;
@@ -280,7 +257,6 @@ void Board::movePiece(Direction direction)
         }
 
         // Create new blocks
-        TraceLog(LOG_INFO, "(Move) Creating new blocks");
         for (int i = 0; i < activePiece->blockRelPos.size(); i++)
         {
             int xToCreate = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
@@ -319,5 +295,54 @@ void Board::movePiece(Direction direction)
         }
     }
 
+}
+
+void Board::handleMoveTick()
+{
+    moveTickTimer++;
+
+    if (moveTickTimer >= moveTickTarget * moveTickModifier)
+    {
+        moveTickTimer = 0;
+        if (!IsKeyDown(KEY_DOWN)) // Disable move tick when manually moving a piece downwards
+        {
+            movePiece(DOWN);
+        }
+    }
+}
+
+void Board::handlePlayerMovement()
+{
+    if (IsKeyPressed(KEY_UP))
+    {
+        rotatePiece();
+    }
+
+    if(IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_DOWN))
+    {
+        playerMoveTickTimer = playerMoveTickTarget;
+    }
+
+    if (IsKeyDown(KEY_LEFT) && playerMoveTickTimer >= playerMoveTickTarget)
+    {
+        movePiece(LEFT);
+        playerMoveTickTimer = 0;
+    }
+    if (IsKeyDown(KEY_RIGHT) && playerMoveTickTimer >= playerMoveTickTarget)
+    {
+        movePiece(RIGHT);
+        playerMoveTickTimer = 0;
+    }
+
+    if (IsKeyDown(KEY_DOWN) && playerMoveTickTimer >= playerMoveTickTarget)
+    {
+        movePiece(DOWN);
+        playerMoveTickTimer = 0;
+    }
+
+    if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_DOWN))
+    {
+        playerMoveTickTimer++;
+    }
 }
 
