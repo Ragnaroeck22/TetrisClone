@@ -55,6 +55,11 @@ void Board::Update()
         movePiece(RIGHT);
     }
 
+    if (IsKeyPressed(KEY_DOWN))
+    {
+        movePiece(DOWN);
+    }
+
 }
 
 void Board::Draw()
@@ -196,18 +201,15 @@ void Board::movePiece(Direction direction)
 {
     bool movePossible = true;
     Vector2 centerMemory = activePiece->centerCoords;
-    std::vector<Vector2> blocksToCheck;
 
     switch (direction)
     {
         case LEFT:
             // Check if move is possible
-            blocksToCheck = vecLowestX(activePiece->blockRelPos);
-
-            for (int i = 0; i < blocksToCheck.size(); i++)
+            for (int i = 0; i < activePiece->blockRelPos.size(); i++)
             {
-                int xToCheck = activePiece->centerCoords.x + blocksToCheck[i].x - 1;
-                int yToCheck = activePiece->centerCoords.y + blocksToCheck[i].y;
+                int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x - 1;
+                int yToCheck = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
 
                 if (!isTileFree(xToCheck, yToCheck))
                 {
@@ -223,12 +225,10 @@ void Board::movePiece(Direction direction)
 
         case RIGHT:
             // Check if move is possible
-            blocksToCheck = vecHighestX(activePiece->blockRelPos);
-
-            for (int i = 0; i < blocksToCheck.size(); i++)
+            for (int i = 0; i < activePiece->blockRelPos.size(); i++)
             {
-                int xToCheck = activePiece->centerCoords.x + blocksToCheck[i].x + 1;
-                int yToCheck = activePiece->centerCoords.y + blocksToCheck[i].y;
+                int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x + 1;
+                int yToCheck = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
 
                 if (!isTileFree(xToCheck, yToCheck))
                 {
@@ -243,7 +243,22 @@ void Board::movePiece(Direction direction)
             break;
 
         case DOWN:
-            // Here goes code
+            // Check if move is possible
+            for (int i = 0; i < activePiece->blockRelPos.size(); i++)
+            {
+                int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
+                int yToCheck = activePiece->centerCoords.y + activePiece->blockRelPos[i].y - 1;
+
+                if (!isTileFree(xToCheck, yToCheck))
+                {
+                    movePossible = false;
+                }
+            }
+            // Move center
+            if (movePossible)
+            {
+                activePiece->centerCoords.y = activePiece->centerCoords.y - 1;
+            }
 
             break;
 
@@ -271,6 +286,36 @@ void Board::movePiece(Direction direction)
             int xToCreate = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
             int yToCreate = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
             tiles[yToCreate][xToCreate].contents = std::make_shared<Block>(activePiece->color);
+        }
+    }
+
+    // Make piece static if it cant move down
+    if (direction == DOWN)
+    {
+        bool disablePiece = false;
+        for (int i = 0; i < activePiece->blockRelPos.size(); i++)
+        {
+            int xToCheck = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
+            int yToCheck = activePiece->centerCoords.y + activePiece->blockRelPos[i].y - 1;
+
+            if (!isTileFree(xToCheck, yToCheck))
+            {
+                disablePiece = true;
+            }
+        }
+        if (disablePiece)
+        {
+            activePiece->isActive = false;
+            for (int i = 0; i < activePiece->blockRelPos.size(); i++)
+            {
+                int targetX = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
+                int targetY = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
+
+                if (tiles[targetY][targetX].contents != nullptr) // Just in case
+                {
+                    tiles[targetY][targetX].contents->isStatic = true;
+                }
+            }
         }
     }
 

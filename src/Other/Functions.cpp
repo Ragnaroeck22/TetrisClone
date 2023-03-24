@@ -107,7 +107,7 @@ std::vector<Vector2> vecLowestY(std::vector<Vector2> vecToCheck)
         // Set up memory
         for (int i = 0; i < vecToCheck.size(); i++)
         {
-            if (vecToCheck[i].y > memory)
+            if (vecToCheck[i].y < memory)
             {
                 memory = vecToCheck[i].y;
             }

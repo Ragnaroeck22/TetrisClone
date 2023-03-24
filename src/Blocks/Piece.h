@@ -20,6 +20,7 @@ public:
     Color color;
 
     Vector2 centerCoords;
+    bool isActive = true;
 
     virtual int rotate() = 0;
     virtual void assignColor();
