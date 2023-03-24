@@ -7,6 +7,7 @@
 #include <random>
 
 #include "../Blocks/PieceI.h"
+#include "../Blocks/PieceT.h"
 #include "../Other/Functions.h"
 
 Board::Board()
@@ -99,6 +100,7 @@ void Board::genNewPiecePool()
     piecePool.clear();
 
     piecePool.push_back(std::make_shared<PieceI>(spawnPosition));
+    piecePool.push_back(std::make_shared<PieceT>(spawnPosition));
 }
 
 void Board::spawnPiece()

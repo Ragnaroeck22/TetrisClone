@@ -32,7 +32,7 @@ public:
     float moveTickModifier = 1;
     // Player movement
     int playerMoveTickTimer = 0;
-    int playerMoveTickTarget = 4;
+    int playerMoveTickTarget = 6;
 
 
 public:
