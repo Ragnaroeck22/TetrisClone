@@ -52,6 +52,7 @@ void Board::Update()
 
     if (!activePiece->isActive)
     {
+        dropBlocks();
         spawnPiece();
     }
 
@@ -343,5 +344,44 @@ void Board::handlePlayerMovement()
     {
         playerMoveTickTimer++;
     }
+}
+
+void Board::dropBlocks()
+{
+    bool lineHasBeenDropped;
+
+    do
+    {
+        lineHasBeenDropped = false;
+
+        // Look for lines to delete
+        for (int i = 0; i < tiles.size(); i++) {
+            bool fullLine = true;
+            for (int j = 0; j < tiles[i].size(); j++) {
+                if (isTileFree(j, i)) {
+                    fullLine = false;
+                }
+            }
+
+            if (fullLine) {
+                tiles.erase(tiles.cbegin() + i);
+                std::vector<Tile> newX;
+                for (int j = 0; j < boardSize.x; j++) {
+                    Tile newTile({static_cast<float>(j), boardSize.y});
+                    newX.push_back(newTile);
+                }
+                tiles.push_back(newX);
+
+                // Re-assign coordinates
+                for (int j = 0; j < tiles.size(); j++) {
+                    for (int k = 0; k < tiles[j].size(); k++) {
+                        tiles[j][k].coordinates.x = k;
+                        tiles[j][k].coordinates.y = j;
+                    }
+                }
+                lineHasBeenDropped = true;
+            }
+        }
+    } while (lineHasBeenDropped);
 }
 

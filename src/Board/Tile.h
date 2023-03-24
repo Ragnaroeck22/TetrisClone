@@ -19,7 +19,6 @@ public:
 private:
 
 public:
-    Tile(Vector2 coordinates, Color color);
     Tile(Vector2 coordinates);
     Tile(); // Fuck this
 };

@@ -56,6 +56,8 @@ private:
 
     void handleMoveTick();
     void handlePlayerMovement();
+
+    void dropBlocks();
 };
 
 
