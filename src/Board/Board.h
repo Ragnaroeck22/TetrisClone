@@ -43,6 +43,7 @@ private:
     int linesCleared = 0;
     int fontSize = 50;
 
+    bool gameOver = false;
 public:
     Board();
 

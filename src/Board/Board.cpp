@@ -66,17 +66,19 @@ Board::Board()
 
 void Board::Update()
 {
-    handlePlayerMovement();
-
-    handleMoveTick();
-
-    if (!activePiece->isActive)
+    if (!gameOver)
     {
-        dropBlocks();
-        spawnPiece();
-        updateDisplayBoard();
-    }
+        handlePlayerMovement();
 
+        handleMoveTick();
+
+        if (!activePiece->isActive)
+        {
+            dropBlocks();
+            spawnPiece();
+            updateDisplayBoard();
+        }
+    }
 }
 
 void Board::Draw()
@@ -141,13 +143,26 @@ void Board::Draw()
              targetY,
              fontSize, BLACK);
 
-    std::string modifierMsg = "Move Tick Modifier: ";
-    int modifier = moveTickModifier * 100;
+    std::string modifierMsg = "Speed: ";
+    int modifier = 100 - moveTickModifier * 100;
     modifierMsg.append(std::to_string(modifier));
     DrawText(modifierMsg.c_str(),
              displayBoardRec.x,
              targetY + (GetScreenHeight() * 0.05) + fontSize,
              fontSize, BLACK);
+
+
+    if (gameOver)
+    {
+        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), ColorAlpha(BLACK, 0.7));
+        std::string textMsg = "Game Over";
+        int gameOverFontSize = 100;
+        int gameOverSpacing = 10;
+        DrawTextEx(GetFontDefault(), textMsg.c_str(),
+                   {GetScreenWidth() / 2 - MeasureTextEx(GetFontDefault(), textMsg.c_str(), gameOverFontSize, gameOverSpacing).x / 2,
+                    GetScreenHeight() / 2 - MeasureTextEx(GetFontDefault(), textMsg.c_str(), gameOverFontSize, gameOverSpacing).y / 2},
+                    gameOverFontSize, gameOverSpacing, BLUE);
+    }
 
 }
 
@@ -193,14 +208,18 @@ void Board::spawnPiece()
 
     activePiece = getPieceFromBuffer();
 
-    // TODO: Check win condition here
-    //
-    //
-
     for (int i = 0; i < activePiece->blockRelPos.size(); i++)
     {
-        tiles[spawnPosition.y + activePiece->blockRelPos[i].y][spawnPosition.x + activePiece->blockRelPos[i].x].contents =
-                std::make_shared<Block>(activePiece->color);
+        if (!isTileFree(spawnPosition.x + activePiece->blockRelPos[i].x, spawnPosition.y + activePiece->blockRelPos[i].y))
+        {
+            gameOver = true;
+        }
+        else
+        {
+            tiles[spawnPosition.y + activePiece->blockRelPos[i].y]
+                 [spawnPosition.x + activePiece->blockRelPos[i].x].contents =
+                         std::make_shared<Block>(activePiece->color);
+        }
     }
 
 }
@@ -471,10 +490,10 @@ void Board::dropBlocks()
             score += 300;
             break;
         case 3:
-            score += 600;
+            score += 500;
             break;
         case 4:
-            score += 1000;
+            score += 800;
     }
 }
 
