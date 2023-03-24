@@ -46,6 +46,15 @@ void Board::Update()
         rotatePiece();
     }
 
+    if (IsKeyPressed(KEY_LEFT))
+    {
+        movePiece(LEFT);
+    }
+    if (IsKeyPressed(KEY_RIGHT))
+    {
+        movePiece(RIGHT);
+    }
+
 }
 
 void Board::Draw()
@@ -117,6 +126,19 @@ void Board::spawnPiece()
 
 bool Board::isTileFree(int posX, int posY)
 {
+    std::string debugMsg = "(Board::isTileFree) Checking for ";
+    debugMsg.append(std::to_string(posX));
+    debugMsg.append(" | ");
+    debugMsg.append(std::to_string(posY));
+    TraceLog(LOG_INFO, debugMsg.c_str());
+
+    if (posX < 0 || posY < 0 || posY > tiles.size() - 1 || posX > tiles[posY].size() - 1)
+    {
+        TraceLog(LOG_INFO, "(Board::isTileFree) Checked tile is out of bounds");
+        return false;
+    }
+
+
     if (tiles[posY][posX].contents != nullptr)
     {
         if (tiles[posY][posX].contents->isStatic)
@@ -163,25 +185,93 @@ void Board::rotatePiece()
     TraceLog(LOG_INFO, "Creating new blocks");
     for (int i = 0; i < activePiece->blockRelPos.size(); i++)
     {
-        int xToDelete = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
-        int yToDelete = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
-        tiles[yToDelete][xToDelete].contents = std::make_shared<Block>(activePiece->color);
+        int xToCreate = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
+        int yToCreate = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
+        tiles[yToCreate][xToCreate].contents = std::make_shared<Block>(activePiece->color);
     }
 
 }
 
 void Board::movePiece(Direction direction)
 {
+    bool movePossible = true;
+    Vector2 centerMemory = activePiece->centerCoords;
+    std::vector<Vector2> blocksToCheck;
+
     switch (direction)
     {
         case LEFT:
             // Check if move is possible
-            std::vector<Vector2> blocksToCheck = vecLowestX(activePiece->blockRelPos);
+            blocksToCheck = vecLowestX(activePiece->blockRelPos);
 
             for (int i = 0; i < blocksToCheck.size(); i++)
             {
+                int xToCheck = activePiece->centerCoords.x + blocksToCheck[i].x - 1;
+                int yToCheck = activePiece->centerCoords.y + blocksToCheck[i].y;
 
+                if (!isTileFree(xToCheck, yToCheck))
+                {
+                    movePossible = false;
+                }
             }
+            // Move center
+            if (movePossible)
+            {
+                activePiece->centerCoords.x = activePiece->centerCoords.x - 1;
+            }
+            break;
+
+        case RIGHT:
+            // Check if move is possible
+            blocksToCheck = vecHighestX(activePiece->blockRelPos);
+
+            for (int i = 0; i < blocksToCheck.size(); i++)
+            {
+                int xToCheck = activePiece->centerCoords.x + blocksToCheck[i].x + 1;
+                int yToCheck = activePiece->centerCoords.y + blocksToCheck[i].y;
+
+                if (!isTileFree(xToCheck, yToCheck))
+                {
+                    movePossible = false;
+                }
+            }
+            // Move center
+            if (movePossible)
+            {
+                activePiece->centerCoords.x = activePiece->centerCoords.x + 1;
+            }
+            break;
+
+        case DOWN:
+            // Here goes code
+
+            break;
+
+        default:
+            return;
+    }
+
+    // Move blocks
+    if (movePossible)
+    {
+
+        // Delete old positions
+        TraceLog(LOG_INFO, "(Move) Deleting old blocks");
+        for (int i = 0; i < activePiece->blockRelPos.size(); i++)
+        {
+            int xToDelete = centerMemory.x + activePiece->blockRelPos[i].x;
+            int yToDelete = centerMemory.y + activePiece->blockRelPos[i].y;
+            tiles[yToDelete][xToDelete].contents = nullptr;
+        }
+
+        // Create new blocks
+        TraceLog(LOG_INFO, "(Move) Creating new blocks");
+        for (int i = 0; i < activePiece->blockRelPos.size(); i++)
+        {
+            int xToCreate = activePiece->centerCoords.x + activePiece->blockRelPos[i].x;
+            int yToCreate = activePiece->centerCoords.y + activePiece->blockRelPos[i].y;
+            tiles[yToCreate][xToCreate].contents = std::make_shared<Block>(activePiece->color);
+        }
     }
 
 }
