@@ -72,19 +72,19 @@ Board::Board()
 
 void Board::Update()
 {
-    if (!gameOver)
-    {
-        handlePlayerMovement();
+    if (gameOver)
+        return;
 
-        handleMoveTick();
+    handlePlayerMovement();
 
-        if (!activePiece->isActive)
-        {
-            dropBlocks();
-            spawnPiece();
-            updateDisplayBoard();
-        }
-    }
+    handleMoveTick();
+
+    if (activePiece->isActive)
+        return;
+
+    dropBlocks();
+    spawnPiece();
+    updateDisplayBoard();
 }
 
 void Board::Draw()
@@ -211,7 +211,6 @@ void Board::genNewPiecePool()
 
 void Board::spawnPiece()
 {
-
     activePiece = getPieceFromBuffer();
 
     for (int i = 0; i < activePiece->blockRelPos.size(); i++)
@@ -227,7 +226,6 @@ void Board::spawnPiece()
                          std::make_shared<Block>(activePiece->color);
         }
     }
-
 }
 
 bool Board::isTileFree(int posX, int posY)
@@ -236,7 +234,6 @@ bool Board::isTileFree(int posX, int posY)
     {
         return false;
     }
-
 
     if (tiles[posY][posX].contents != nullptr)
     {
