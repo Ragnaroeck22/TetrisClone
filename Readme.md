@@ -6,6 +6,9 @@
     \/_/   \/_____/     \/_/   \/_/ /_/   \/_/   \/_____/      \/_____/   \/_____/   \/_____/   \/_/ \/_/   \/_____/ 
                                                                                                                     
 ```
+# About
+This is a really barebones tetris clone I made. This is programmed in C++ using Raylib, no game engine was used.
+You'll have to build it yourself for now, I'm afraid.
 
 # Controls
 
